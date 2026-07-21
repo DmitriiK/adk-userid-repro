@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import opentelemetry.instrumentation.google_genai as google_genai_instr
 import pytest
+from google.adk.telemetry.tracing import _use_extra_generate_content_attributes
 from opentelemetry import context as otel_context
+from opentelemetry.instrumentation.google_genai import (
+    GENERATE_CONTENT_EXTRA_ATTRIBUTES_CONTEXT_KEY,
+)
 from opentelemetry.semconv._incubating.attributes.user_attributes import USER_ID
 
 
@@ -34,11 +38,6 @@ def test_user_id_silently_dropped_from_otel_context():
     When EVENT_ONLY import fails, ADK does `except: pass` and never attaches
     user.id to any OTel context the instrumentor reads.
     """
-    from google.adk.telemetry.tracing import _use_extra_generate_content_attributes
-    from opentelemetry.instrumentation.google_genai import (
-        GENERATE_CONTENT_EXTRA_ATTRIBUTES_CONTEXT_KEY,
-    )
-
     common = {
         "gen_ai.agent.name": "repro_agent",
         "gen_ai.conversation.id": "session-1",
