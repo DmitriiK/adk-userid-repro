@@ -1,0 +1,19 @@
+[project]
+name = "adk-userid-repro"
+version = "0.1.0"
+description = "Minimal repro for google/adk-python#6361 — user.id silently dropped"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk==2.4.0",
+    "opentelemetry-sdk>=1.27",
+    # 0.7b1 is what Agent Engine commonly resolves with ADK 2.4; still missing EVENT_ONLY key.
+    # (1.0b0 needs util-genai 1.0b0 which conflicts with ADK 2.4's opentelemetry-api pin.)
+    "opentelemetry-instrumentation-google-genai==0.7b1",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
