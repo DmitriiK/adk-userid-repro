@@ -35,7 +35,7 @@ uv venv && uv pip install --python .venv/bin/python \
 .venv/bin/pytest -q
 ```
 
-Expected: **3 passed** (tests assert the buggy behavior is present).
+Expected: **4 passed** (tests assert the buggy behavior is present).
 
 ## What the tests show
 
@@ -44,6 +44,9 @@ Expected: **3 passed** (tests assert the buggy behavior is present).
 | `test_event_only_context_key_is_missing` | Instrumentation does not export the EVENT_ONLY key ADK imports |
 | `test_import_error_is_swallowed_without_warning_path` | `from … import GENERATE_CONTENT_EVENT_ONLY_…` raises |
 | `test_user_id_silently_dropped_from_otel_context` | After `_use_extra_generate_content_attributes(..., log_only={user.id: …})`, span extras context has **no** `user.id` |
+| `test_agent_call_with_user_id_missing_from_traces` | **Agent-level:** `InMemoryRunner.run_async(user_id=…)` with a mocked Gemini call; captured OTel spans never contain that `user.id` |
+
+The agent-level test is the product view: pass `user_id` into the runner and expect it on traces, without caring about OTel context keys. Gemini HTTP is mocked; `GoogleGenAiSdkInstrumentor` still runs so spans are created (Vertex-like path).
 
 That mirrors the Vertex Agent Engine instrumentor path:
 `use_inference_span` → `_use_extra_generate_content_attributes` → silent drop.
